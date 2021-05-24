@@ -58,10 +58,21 @@ void Graph::PrintShortestPathWeight(int s){
     S[s] = true; // 시작 정점 s 포함
     dist[s] = 0; // 시작점이므로 가중치 0
 
-    for(int i = 0; i < n; i++){ // i는 마지막 정점
+    for(int i = 0; i < n-2; i++){ // 정점 s로부터 n-1개 경로를 결정
+        int Min_dist = 999, Min_index = -1;
+
+        for(int j = 0; j < n; j++){ // S[j] = false 이고, dist[j] 에서 j 는 Min_index
+            if(!S[j] && dist[j] < Min_dist){
+                Min_dist = dist[j];
+                Min_index = j;
+            }
+        }
+
+        S[Min_index] = true;
+
         for(int j = 0; j < n; j++){ // 최소값 찾기
-            if(!S[i] && (dist[j] + graph[j][i]) < dist[i]){
-                dist[i] = dist[j] + graph[j][i];
+            if(!S[j] && dist[Min_index] + graph[Min_index][j] < dist[j]){
+                dist[j] = dist[Min_index] + graph[Min_index][j];
             }
         }
     }
