@@ -20,9 +20,15 @@ void Graph::LoadMatrix(std::string& filename){
         }
     }
     fin.close();
+    
     return;
 }
 
+/*************** 행렬 크기 반환 함수 *********/
+// n x n의 경우 n 반환
+int Graph::GetSize(void){
+    return n;
+}
 
 /**********인접 행렬 출력 함수*************/
 void Graph::PrintMatrix(void){
@@ -32,5 +38,37 @@ void Graph::PrintMatrix(void){
         }
         cout << endl;
     }
+    return;
+}
+
+/**********최단 경로 출력 함수(Dijkstra 최단경로 알고리즘) ********/
+// 시작 정점 s로부터 나머지 vertex까지의 최단 경로 출력
+void Graph::PrintShortestPathWeight(int s){
+    // 간선의 길이 graph[i][j], 최단 경로 dist[i] 
+    // S[i]: 정점 i가 S에 포함되어 있으면 S[i] = true, 아니면 S[i] = false로 표현하는 boolean 배열
+    bool S[n];
+    int dist[n];
+
+    // 초기화
+    for(int i = 0; i < n; i++){
+        S[i] = false;
+        dist[i] = graph[s][i];
+    }
+
+    S[s] = true; // 시작 정점 s 포함
+    dist[s] = 0; // 시작점이므로 가중치 0
+
+    for(int i = 0; i < n; i++){ // i는 마지막 정점
+        for(int j = 0; j < n; j++){ // 최소값 찾기
+            if(!S[i] && (dist[j] + graph[j][i]) < dist[i]){
+                dist[i] = dist[j] + graph[j][i];
+            }
+        }
+    }
+
+    for(int i = 0; i < n; i++){
+        cout << dist[i] << endl;
+    }
+
     return;
 }
