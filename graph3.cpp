@@ -2,7 +2,7 @@
 #include<fstream>
 #include<string>
 #include<stack>
-#include"graph.h"
+#include"graph3.h"
 
 using namespace std;
 
@@ -114,22 +114,14 @@ void Graph::PrintShortestPath(int s){
     for (int j = 0; j < n; j++) {
         if (j != s) {
             // 지나간 정점이 아니고, Min_dist보다 가중치가 작으면 해당 index 저장
-            int Min_dist = 999, Min_index = -1;
-
-            for(int j = 0; j < n; j++){ 
-                if(!S[j] && dist[j] < Min_dist){
-                    Min_dist = dist[j];
-                    Min_index = j;
-                }
-            }
-            
-            S[Min_index] = true;
+            int u = Choose(n);
+            S[u] = true;
             
             for (int i = 0; i < n; i++) {
-                if (!S[i] && dist[Min_index] + graph[Min_index][i] < dist[i])
+                if (!S[i] && dist[u] + graph[u][i] < dist[i])
                 {
-                    dist[i] = dist[Min_index] + graph[Min_index][i];
-                    path[i] = Min_index;
+                    dist[i] = dist[u] + graph[u][i];
+                    path[i] = u;
                 }
             }
         }
