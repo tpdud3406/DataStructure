@@ -14,9 +14,7 @@ int main(void) {
     getline(cin, filename);
     
     g.LoadMatrix(filename);
-    int n = g.GetSize();
-    for (int i = 0; i < n; i++) {
-        g.PrintShortestPathWeight(i);
-    }
+    g.PrintShortestPath(0);
+
     return 0;
 }

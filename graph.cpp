@@ -1,5 +1,7 @@
 #include<iostream>
 #include<fstream>
+#include<string>
+#include<stack>
 #include"graph.h"
 
 using namespace std;
@@ -40,14 +42,26 @@ void Graph::PrintMatrix(void){
     }
     return;
 }
+/*********가중치가 최소가 되는 정점 반환하는 함수 *********/
+int Graph::Choose(int n) {
+    // Choose는 S[i]=false 이고, dist[u] = minimum dist[w]가 되는 u를 반환
+    int min;
+    for (int i = 0; i < n; i++) {
+        if (!S[i]) min = i;
+    }
+    for (int i = 0; i < n; i++) {
+        if ((!S[i]) && (dist[min] > dist[i])) min = i;
+    }
+    return min;
+}
 
 /**********최단 경로 출력 함수(Dijkstra 최단경로 알고리즘) ********/
 // 시작 정점 s로부터 나머지 vertex까지의 최단 경로 출력
 void Graph::PrintShortestPathWeight(int s){
     // 간선의 길이 graph[i][j], 최단 경로 dist[i] 
     // S[i]: 정점 i가 S에 포함되어 있으면 S[i] = true, 아니면 S[i] = false로 표현하는 boolean 배열
-    bool S[n];
-    int dist[n];
+    dist = new int[n];
+    S = new bool[n];
 
     // 초기화
     for(int i = 0; i < n; i++){
@@ -58,10 +72,14 @@ void Graph::PrintShortestPathWeight(int s){
     S[s] = true; // 시작 정점 s 포함
     dist[s] = 0; // 시작점이므로 가중치 0
 
-    for(int i = 0; i < n; i++){ // i는 마지막 정점
+    //Dist[w]=min{Dist[w], Dist[u] + weight[u, w]}
+    for(int i = 0; i < n-2; i++){ // 정점 s로부터 n-1개 경로를 결정
+        int u = Choose(n);
+        S[u] = true;
+
         for(int j = 0; j < n; j++){ // 최소값 찾기
-            if(!S[i] && (dist[j] + graph[j][i]) < dist[i]){
-                dist[i] = dist[j] + graph[j][i];
+            if(!S[j] && dist[u] + graph[u][j] < dist[j]){
+                dist[j] = dist[u] + graph[u][j];
             }
         }
     }
@@ -72,3 +90,68 @@ void Graph::PrintShortestPathWeight(int s){
 
     return;
 }
+
+/******** 최단 경로 출력 함수 *********/
+// 시작 정점 s로부터 나머지 vertex까지의 최단 경로 출력
+// 기존 가중치 구하는 함수에서 경로를 저장하는 배열 추가
+
+void Graph::PrintShortestPath(int s){
+    stack<int> print;
+    dist = new int[n];
+    S = new bool[n];
+    int* path = new int[n];
+
+    // 시작 정점 s 포함
+    for (int i = 0; i < n; i++) {
+        S[i] = false;
+        dist[i] = graph[s][i];
+        path[i] = i;
+    }
+
+    S[s] = true; // 시작 정점 s 포함
+    dist[s] = 0; // 시작점이므로 가중치 0
+
+    for (int j = 0; j < n; j++) {
+        if (j != s) {
+            // 지나간 정점이 아니고, Min_dist보다 가중치가 작으면 해당 index 저장
+            int Min_dist = 999, Min_index = -1;
+
+            for(int j = 0; j < n; j++){ 
+                if(!S[j] && dist[j] < Min_dist){
+                    Min_dist = dist[j];
+                    Min_index = j;
+                }
+            }
+            
+            S[Min_index] = true;
+            
+            for (int i = 0; i < n; i++) {
+                if (!S[i] && dist[Min_index] + graph[Min_index][i] < dist[i])
+                {
+                    dist[i] = dist[Min_index] + graph[Min_index][i];
+                    path[i] = Min_index;
+                }
+            }
+        }
+    }
+
+    // 저장 및 top 에 있는 값 출력
+    for (int i = 0; i < n; i++) {
+        int j = i;
+        if (i != s) {
+            print.push(i);
+            while(path[j] != j){
+                j = path[j];
+                print.push(j);
+            }
+            print.push(s);   
+            while (!print.empty()) {
+                cout << print.top() << " ";
+                print.pop();
+            }
+            cout << endl;
+        }  
+    }
+    
+    return;
+} 
