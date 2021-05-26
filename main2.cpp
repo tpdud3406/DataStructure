@@ -3,7 +3,7 @@
 // *** 주의! 아래의 내용을 변경할 경우 오답처리될 수 있습니다. **
 #include <iostream>
 #include <string>
-#include "graph.h"
+#include "graph2.h"
 
 using namespace std;
 

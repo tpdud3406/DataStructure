@@ -2,7 +2,7 @@
 #include<fstream>
 #include<string>
 #include<stack>
-#include"graph3.h"
+#include"graph.h"
 
 using namespace std;
 
@@ -42,14 +42,26 @@ void Graph::PrintMatrix(void){
     }
     return;
 }
+/*********가중치가 최소가 되는 정점 반환하는 함수 *********/
+int Graph::Choose(int n) {
+    // Choose는 S[i]=false 이고, dist[u] = minimum dist[w]가 되는 u를 반환
+    int min;
+    for (int i = 0; i < n; i++) {
+        if (!S[i]) min = i;
+    }
+    for (int i = 0; i < n; i++) {
+        if ((!S[i]) && (dist[min] > dist[i])) min = i;
+    }
+    return min;
+}
 
 /**********최단 경로 출력 함수(Dijkstra 최단경로 알고리즘) ********/
 // 시작 정점 s로부터 나머지 vertex까지의 최단 경로 출력
 void Graph::PrintShortestPathWeight(int s){
     // 간선의 길이 graph[i][j], 최단 경로 dist[i] 
     // S[i]: 정점 i가 S에 포함되어 있으면 S[i] = true, 아니면 S[i] = false로 표현하는 boolean 배열
-    int* dist = new int[n];
-    bool* S = new bool[n];
+    dist = new int[n];
+    S = new bool[n];
 
     // 초기화
     for(int i = 0; i < n; i++){
@@ -60,22 +72,14 @@ void Graph::PrintShortestPathWeight(int s){
     S[s] = true; // 시작 정점 s 포함
     dist[s] = 0; // 시작점이므로 가중치 0
 
+    //Dist[w]=min{Dist[w], Dist[u] + weight[u, w]}
     for(int i = 0; i < n-2; i++){ // 정점 s로부터 n-1개 경로를 결정
-        // 지나간 정점이 아니고, Min_dist보다 가중치가 작으면 해당 index 저장
-        int Min_dist = 999, Min_index = -1;
-
-        for(int j = 0; j < n; j++){ 
-            if(!S[j] && dist[j] < Min_dist){
-                Min_dist = dist[j];
-                Min_index = j;
-            }
-        }
-
-        S[Min_index] = true;
+        int u = Choose(n);
+        S[u] = true;
 
         for(int j = 0; j < n; j++){ // 최소값 찾기
-            if(!S[j] && dist[Min_index] + graph[Min_index][j] < dist[j]){
-                dist[j] = dist[Min_index] + graph[Min_index][j];
+            if(!S[j] && dist[u] + graph[u][j] < dist[j]){
+                dist[j] = dist[u] + graph[u][j];
             }
         }
     }
@@ -93,8 +97,8 @@ void Graph::PrintShortestPathWeight(int s){
 
 void Graph::PrintShortestPath(int s){
     stack<int> print;
-    int* dist = new int[n];
-    bool* S = new bool[n];
+    dist = new int[n];
+    S = new bool[n];
     int* path = new int[n];
 
     // 시작 정점 s 포함
