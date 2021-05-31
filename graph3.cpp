@@ -127,7 +127,7 @@ void Graph::PrintShortestPath(int s){
         }
     }
 
-    // 저장 및 top 에 있는 값 출력
+    // 저장 및 출력
     for (int i = 0; i < n; i++) {
         int j = i;
         if (i != s) {
